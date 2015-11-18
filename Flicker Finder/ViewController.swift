@@ -51,31 +51,35 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     func keyboardWillShow(notification: NSNotification) {
-        let info = notification.userInfo!
-        let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as! NSValue).CGRectValue()
+        if scrollView.contentOffset.y == 0 {
+            let info = notification.userInfo!
+            let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as! NSValue).CGRectValue()
         
-        let insets = UIEdgeInsetsMake(scrollView.contentInset.top, 0, keyboardSize.height, 0)
+            let insets = UIEdgeInsetsMake(scrollView.contentInset.top, 0, keyboardSize.height, 0)
         
-        scrollView.contentInset = insets
-        scrollView.scrollIndicatorInsets = insets
-        scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, scrollView.contentOffset.y + keyboardSize.height)
+            scrollView.contentInset = insets
+            scrollView.scrollIndicatorInsets = insets
+            scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, scrollView.contentOffset.y + keyboardSize.height)
+        }
     }
     
     func keyboardWillHide(notification: NSNotification) {
-        let info = notification.userInfo!
-        let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as! NSValue).CGRectValue()
+        if scrollView.contentOffset.y > 0 {
+            let info = notification.userInfo!
+            let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as! NSValue).CGRectValue()
         
-        let insets = UIEdgeInsetsMake(scrollView.contentInset.top, 0, keyboardSize.height, 0)
+            let insets = UIEdgeInsetsMake(scrollView.contentInset.top, 0, keyboardSize.height, 0)
         
-        scrollView.contentInset = insets
-        scrollView.scrollIndicatorInsets = insets
-        scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, scrollView.contentOffset.y - keyboardSize.height)
+            scrollView.contentInset = insets
+            scrollView.scrollIndicatorInsets = insets
+            scrollView.contentOffset = CGPointMake(scrollView.contentOffset.x, scrollView.contentOffset.y - keyboardSize.height)
+        }
     }
     
     @IBAction func searchDescription(sender: AnyObject) {
         if let text = tfTextSearch.text {
             if text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet()) == "" {
-                tfTextSearch.text = "Type a text first!"
+                lblImageTitle.text = "Type a text first!"
                 return
             }
             
@@ -88,27 +92,24 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     @IBAction func serachCoordinates(sender: AnyObject) {
-        if var latitude = tfLatitude.text, longitude = tfLongitude.text {
+        if var latitudeString = tfLatitude.text, longitudeString = tfLongitude.text {
             
-            latitude = latitude.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-            longitude = longitude.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-            if latitude == "" || longitude == ""{
-                tfLatitude.text = "Type a latitude first!"
-                tfLatitude.text = "Type a longitude first!"
+            latitudeString = latitudeString.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+            longitudeString = longitudeString.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+            if latitudeString == "" || longitudeString == ""{
+                lblImageTitle.text = "Type a latitude and longitude first!"
                 return
             }
             
-            
-            if longitude == "" {
-                tfLatitude.text = "Type a latitude first!"
-                return
+            if let latitude = Double(latitudeString), longitude = Double(longitudeString) where latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180 {
+                view.endEditing(true)
+                var methodParams = Utils.buildDefaultRequestParameters()
+                methodParams["bbox"] = Utils.createBoundingBoxString(latitude: latitude, longitude: longitude)
+                sendRequest(BASE_URL + Utils.escapedParameters(methodParams))
+            } else {
+                lblImageTitle.text = "Latitude and longitude must be numeric between [-90, 90] and [-180, 180]"
             }
             
-            view.endEditing(true)
-            
-            var methodParams = Utils.buildDefaultRequestParameters()
-            methodParams["bbox"] = Utils.createBoundingBoxString(latitude: Double(latitude)!, longitude: Double(longitude)!)
-            sendRequest(BASE_URL + Utils.escapedParameters(methodParams))
         }
     }
     

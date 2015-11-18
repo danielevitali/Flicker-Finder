@@ -76,7 +76,7 @@
                                             <action selector="searchDescription:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Onr-OH-XKL"/>
                                         </connections>
                                     </button>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="title" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CSA-UN-Mze">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="" textAlignment="center" lineBreakMode="clip" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CSA-UN-Mze">
                                         <rect key="frame" x="20" y="524" width="561" height="20"/>
                                         <animations/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
